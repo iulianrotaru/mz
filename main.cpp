@@ -1,58 +1,47 @@
-#include <fstream>
+#include <bits/stdc++.h>
 using namespace std;
-ifstream f("bitonic.in");
-ofstream g("bitonic.out");
-int n,t,sol,i,poz,a[1<<10],B[1<<10],D[1<<10],S[1<<10],T[1<<10];
-int search_bin(int val)
-{
-    int j,step;
-    for(j=0,step=1<<10;step;step>>=1)
-        if(j+step<=B[0]&&B[j+step]<val) j+=step;
-    return j;
-}
-int search_bin_(int val)
-{
-    int j,step;
-    for(j=0,step=1<<10;step;step>>=1)
-        if(j+step<=D[0]&&D[j+step]>val) j+=step;
-    return j;
-}
+ifstream f("provacanta.in");
+ofstream g("provacanta.out");
+int t,i,j,l,k,n,m,timp,bani,sol,dp[102][102],a[1002][102],b[1002][102];
 int main()
 {
     f>>t;
+    ///dp i elemente din a cu j elemente din b
+    for(i=1;i<=100;++i)
+        for(j=1,dp[i][0]=i*(i-1)/2;j<=100;++j)
+    {
+        dp[i][j]=1<<30;
+        for(k=0;k<=i;++k)
+            dp[i][j]=min(dp[i][j],dp[k][j-1]+(i-k)*(i-k-1)/2);
+    }
     while(t--)
     {
-        f>>n>>a[1];
-        B[1]=a[1];
-        D[1]=a[1];
-        B[0]=D[0]=1;
-        for(i=2;i<=n;++i)
+        f>>n>>m>>k;
+        for(i=0;i<=k;++i)
+            for(j=0;j<=100;++j) a[i][j]=b[i][j]=-(1<<29);
+        a[0][0]=b[0][0]=sol=0;
+        ///time obiecte
+        for(i=1;i<=n;++i)
         {
-            f>>a[i];
-            poz=search_bin(a[i]);
-            if(poz==B[0]) ++B[0];
-            B[poz+1]=a[i];
-            S[i]=poz+1;
-            poz=search_bin_(a[i]);
-            if(poz==D[0]) ++D[0];
-            D[poz+1]=a[i];
-            T[i]=poz+1;
+            f>>timp>>bani;
+            for(j=k-timp;j>=0;--j)
+                for(l=i-1;l>=0;--l)
+                    a[j+timp][l+1]=max(bani+a[j][l],a[j+timp][l+1]);
         }
-        sol=max(S[n],T[n]);
-        B[1]=a[n];
-        D[1]=a[n];
-        B[0]=D[0]=1;
-        for(i=n-1;i>0;--i)
+        for(i=1;i<=m;++i)
         {
-            poz=search_bin(a[i]);
-            if(poz==B[0]) ++B[0];
-            B[poz+1]=a[i];
-            sol=max(sol,S[i]+poz);
-            poz=search_bin_(a[i]);
-            if(poz==D[0]) ++D[0];
-            D[poz+1]=a[i];
-            sol=max(sol,T[i]+poz);
+            f>>timp>>bani;
+            for(j=k-timp;j>=0;--j)
+                for(l=i-1;l>=0;--l)
+                    b[j+timp][l+1]=max(bani+b[j][l],b[j+timp][l+1]);
         }
+        for(i=1;i<=k;++i)
+            for(j=0;j<=m;++j)
+                b[i][j]=max(b[i][j],b[i-1][j]);
+        for(i=0;i<=n;++i)
+            for(j=0;j<=m;++j)
+                for(l=0;l<=k-dp[i][j];++l)
+                    sol=max(sol,a[l][i]+b[k-dp[i][j]-l][j]);
         g<<sol<<'\n';
     }
     return 0;
