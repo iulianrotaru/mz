@@ -1,48 +1,71 @@
-#include <bits/stdc++.h>
+#include <fstream>
+#include <algorithm>
+#include <cstring>
+#define Xp 20012
 using namespace std;
-ifstream f("provacanta.in");
-ofstream g("provacanta.out");
-int t,i,j,l,k,n,m,timp,bani,sol,dp[102][102],a[1002][102],b[1002][102];
+ifstream f("criptare2.in");
+ofstream g("criptare2.out");
+int i,n,dist,l,j,step,m,R[30],frec[30],Q[Xp][30],v[Xp];
+char w[30];
+bool cmp(int a,int b)
+{
+    if(Q[a][0]!=Q[b][0]) return Q[a][0]<Q[b][0];
+    for(int jeg=1;jeg<=Q[a][0];++jeg)
+        if(Q[a][jeg]!=Q[b][jeg]) return Q[a][jeg]<Q[b][jeg];
+    return 0;
+}
+bool ver()
+{
+    if(Q[v[j+step]][0]!=R[0]) return Q[v[j+step]][0]<R[0];
+    for(int jeg=1;jeg<=R[0];++jeg)
+        if(R[jeg]!=Q[v[j+step]][jeg])
+            return Q[v[j+step]][jeg]<R[jeg];
+    return 1;
+}
+bool semn()
+{
+    for(int jeg=0;jeg<=R[0];++jeg)
+        if(Q[v[j]][jeg]!=R[jeg]) return 0;
+    return 1;
+}
 int main()
 {
-    f>>t;
-    ///dp i elemente din a cu j elemente din b
-    for(i=1;i<=100;++i)
-        for(j=1,dp[i][0]=i*(i-1)/2;j<=100;++j)
+    f>>n;
+    for(i=1;i<=n;++i)
     {
-        dp[i][j]=1<<30;
-        for(k=0;k<=i;++k)
-            dp[i][j]=min(dp[i][j],dp[k][j-1]+(i-k)*(i-k-1)/2);
+        f>>w;
+        for(j=1;j<=26;++j) frec[j]=0;
+        l=strlen(w);
+        for(j=dist=0;j<l;++j)
+        {
+            if(!frec[w[j]-'a'+1])
+            {
+                Q[i][++Q[i][0]]=++dist;
+                frec[w[j]-'a'+1]=dist;
+            }
+            else Q[i][++Q[i][0]]=frec[w[j]-'a'+1];
+        }
+        v[i]=i;
     }
-    while(t--)
+    sort(v+1,v+n+1,cmp);
+    f>>m;
+    while(m--)
     {
-        f>>n>>m>>k;
-        for(i=0;i<=k;++i)
-            for(j=0;j<=100;++j) a[i][j]=b[i][j]=-(1<<29);
-        a[0][0]=b[0][0]=sol=0;
-        ///time obiecte
-        for(i=1;i<=n;++i)
+        f>>w;
+        for(j=1;j<=26;++j) frec[j]=0;
+        l=strlen(w);
+        for(j=dist=R[0]=0;j<l;++j)
         {
-            f>>timp>>bani;
-            for(j=k-timp;j>=0;--j)
-                for(l=i-1;l>=0;--l)
-                    a[j+timp][l+1]=max(bani+a[j][l],a[j+timp][l+1]);
+            if(!frec[w[j]-'a'+1])
+            {
+                R[++R[0]]=++dist;
+                frec[w[j]-'a'+1]=dist;
+            }
+            else R[++R[0]]=frec[w[j]-'a'+1];
         }
-        for(i=1;i<=m;++i)
-        {
-            f>>timp>>bani;
-            for(j=k-timp;j>=0;--j)
-                for(l=i-1;l>=0;--l)
-                    b[j+timp][l+1]=max(bani+b[j][l],b[j+timp][l+1]);
-        }
-        for(i=1;i<=k;++i)
-            for(j=0;j<=m;++j)
-                b[i][j]=max(b[i][j],b[i-1][j]);
-        for(i=0;i<=n;++i)
-            for(j=0;j<=m;++j)
-                for(l=0;l<=k-dp[i][j];++l)
-                    sol=max(sol,a[l][i]+b[k-dp[i][j]-l][j]);
-        g<<sol<<'\n';
+        for(j=0,step=(1<<15);step;step>>=1)
+            if(j+step<=n&&ver()) j+=step;
+        g<<semn()<<'\n';
     }
     return 0;
 }
