@@ -75,3 +75,55 @@ int main()
     cout<<A<<' '<<B<<' '<<C;
     return 0;
 }
+//produs cartezian
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+long long n,i,j,a,b,y,sol=1;
+char x,q,dp[50][50];
+int main()
+{
+    cin>>a>>n;
+    cout<<'{';
+    for(i=1;i<=a;++i)
+        for(j=1;j<=n;++j)
+    {
+        cout<<'('<<i<<','<<j<<')';
+        if(i!=a||j!=n) cout<<',';
+    }
+    cout<<'}';
+    return 0;
+}
+//produs cartezian 1
+#include <fstream>
+using namespace std;
+ifstream f("produscartezian1.in");
+ofstream g("produscartezian1.out");
+int n,m,k,x[10];
+void afis()
+{
+    for(int i=1;i<=m;i++)
+        g<<x[i]<<' ';
+    g<<'\n';
+}
+void back()
+{
+    k=1;x[1]=0;
+    do
+    {
+        while(x[k]<n)
+        {
+            x[k]++;
+            if(k==m) afis();
+            else {k++;x[k]=0;}
+        }
+        k--;
+    }while(k);
+}
+int main()
+{
+    f>>n>>m;
+    back();
+    return 0;
+}
