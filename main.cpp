@@ -127,3 +127,20 @@ int main()
     back();
     return 0;
 }
+#include <fstream>
+using namespace std;
+ifstream f("cladire.in");
+ofstream g("cladire.out");
+int x,y;
+unsigned long long a[2009][2009];
+int main()
+{
+    f>>x>>y;
+    for(int i=1;i<=x;i++) a[i][1]=1;
+    for(int j=1;j<=y;j++) a[1][j]=1;
+    for(int i=2;i<=x;i++)
+        for(int j=2;j<=y;j++)
+            a[i][j]=(a[i-1][j]+a[i][j-1])%9901;
+    g<<a[x][y]%9901;
+    return 0;
+}
